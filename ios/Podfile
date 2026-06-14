@@ -1,0 +1,84 @@
+platform :ios, '13.0'
+
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+use_modular_headers!
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+workspace 'Runner.xcworkspace'
+
+def flutter_root
+  generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
+  unless File.exist?(generated_xcode_build_settings_path)
+    raise "Generated.xcconfig must exist. If you're running pod install manually, make sure flutter pub get is executed first."
+  end
+
+  File.foreach(generated_xcode_build_settings_path) do |line|
+    matches = line.match(/FLUTTER_ROOT\=(.*)/)
+    return matches[1].strip if matches
+  end
+
+  raise 'FLUTTER_ROOT not found in Generated.xcconfig.'
+end
+
+require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
+
+target 'Runner' do
+  flutter_install_all_ios_pods(File.dirname(File.realpath(__FILE__)))
+end
+
+post_install do |installer|
+  debug_engine_dir = File.expand_path(File.join(flutter_root, 'bin', 'cache', 'artifacts', 'engine', 'ios', 'Flutter.xcframework', 'ios-arm64_x86_64-simulator'))
+  release_engine_dir = File.expand_path(File.join(flutter_root, 'bin', 'cache', 'artifacts', 'engine', 'ios', 'Flutter.xcframework', 'ios-arm64'))
+
+  installer.pods_project.targets.each do |target|
+    next unless target.respond_to?(:platform_name) && target.platform_name == :ios
+
+    target.build_configurations.each do |config|
+      config.build_settings['FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]'] ||= '$(inherited)'
+      config.build_settings['FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]'] += " \"#{debug_engine_dir}\""
+      config.build_settings['FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]'] ||= '$(inherited)'
+      config.build_settings['FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]'] += " \"#{release_engine_dir}\""
+      config.build_settings['HEADER_SEARCH_PATHS[sdk=iphonesimulator*]'] ||= '$(inherited)'
+      config.build_settings['HEADER_SEARCH_PATHS[sdk=iphonesimulator*]'] += " \"#{debug_engine_dir}/Flutter.framework/Headers\""
+      config.build_settings['HEADER_SEARCH_PATHS[sdk=iphoneos*]'] ||= '$(inherited)'
+      config.build_settings['HEADER_SEARCH_PATHS[sdk=iphoneos*]'] += " \"#{release_engine_dir}/Flutter.framework/Headers\""
+      config.build_settings['OTHER_LDFLAGS'] ||= '$(inherited)'
+      config.build_settings['OTHER_LDFLAGS'] += ' -framework Flutter'
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      config.build_settings['VALID_ARCHS[sdk=iphonesimulator*]'] = '$(ARCHS_STANDARD)'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = '$(inherited) i386'
+      config.build_settings['EXCLUDED_ARCHS[sdk=iphoneos*]'] = '$(inherited) armv7'
+    end
+  end
+
+  # Restore Flutter xcconfig files as the base configuration for the Runner target.
+  # CocoaPods 1.x overrides the base configuration with the Pods xcconfig, removing
+  # Flutter build variables (FLUTTER_BUILD_DIR, FLUTTER_ROOT, etc.) from the build
+  # environment. Flutter's xcconfig files already include the Pods xcconfig via
+  # #include?, so this preserves both Flutter and CocoaPods settings.
+  user_project = installer.aggregate_targets.find { |t| t.name == 'Pods-Runner' }&.user_project
+  if user_project
+    runner_target = user_project.targets.find { |t| t.name == 'Runner' }
+    if runner_target
+      debug_xcconfig = user_project.files.find { |f| f.path == 'Flutter/Debug.xcconfig' }
+      release_xcconfig = user_project.files.find { |f| f.path == 'Flutter/Release.xcconfig' }
+
+      runner_target.build_configurations.each do |config|
+        case config.name
+        when 'Debug'
+          config.base_configuration_reference = debug_xcconfig if debug_xcconfig
+        when 'Release', 'Profile'
+          config.base_configuration_reference = release_xcconfig if release_xcconfig
+        end
+      end
+
+      user_project.save
+    end
+  end
+end

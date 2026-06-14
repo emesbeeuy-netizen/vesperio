@@ -1,0 +1,146 @@
+[
+  {
+    "id": "rain",
+    "name": "Rain",
+    "description": "Gentle rainfall perfect for sleep",
+    "category": "nature",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/rain.mp3",
+    "imageAsset": "assets/images/rain.png"
+  },
+  {
+    "id": "sea",
+    "name": "Sea Waves",
+    "description": "Calming ocean waves",
+    "category": "nature",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/sea.mp3",
+    "imageAsset": "assets/images/sea.png"
+  },
+  {
+    "id": "wind",
+    "name": "Wind",
+    "description": "Soft wind through trees",
+    "category": "nature",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/wind.mp3",
+    "imageAsset": "assets/images/wind.png"
+  },
+  {
+    "id": "forest",
+    "name": "Forest",
+    "description": "Peaceful forest ambience",
+    "category": "nature",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/forest.mp3",
+    "imageAsset": "assets/images/forest.png"
+  },
+  {
+    "id": "white_noise",
+    "name": "White Noise",
+    "description": "Pure white noise",
+    "category": "ambient",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/white_noise.mp3",
+    "imageAsset": "assets/images/white_noise.png"
+  },
+  {
+    "id": "brown_noise",
+    "name": "Brown Noise",
+    "description": "Deep relaxing brown noise",
+    "category": "ambient",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/brown_noise.mp3",
+    "imageAsset": "assets/images/brown_noise.png"
+  },
+  {
+    "id": "pink_noise",
+    "name": "Pink Noise",
+    "description": "Balanced pink noise",
+    "category": "ambient",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/pink_noise.mp3",
+    "imageAsset": "assets/images/pink_noise.png"
+  },
+  {
+    "id": "fireplace",
+    "name": "Fireplace",
+    "description": "Cozy fireplace crackling",
+    "category": "ambient",
+    "isPremium": false,
+    "filePath": "assets/sounds/free/fireplace.mp3",
+    "imageAsset": "assets/images/fireplace.png"
+  },
+  {
+    "id": "thunderstorm",
+    "name": "Thunderstorm",
+    "description": "Dramatic storm with thunder",
+    "category": "weather",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/thunderstorm.mp3",
+    "imageAsset": "assets/images/thunderstorm.png"
+  },
+  {
+    "id": "train",
+    "name": "Train",
+    "description": "Rhythmic train journey",
+    "category": "transport",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/train.mp3",
+    "imageAsset": "assets/images/train.png"
+  },
+  {
+    "id": "waterfall",
+    "name": "Waterfall",
+    "description": "Majestic waterfall sounds",
+    "category": "water",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/waterfall.mp3",
+    "imageAsset": "assets/images/waterfall.png"
+  },
+  {
+    "id": "coffee_shop",
+    "name": "Vintage Coffee",
+    "description": "Cozy coffee shop ambience",
+    "category": "ambient",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/coffee_shop.mp3",
+    "imageAsset": "assets/images/coffee_shop.png"
+  },
+  {
+    "id": "river",
+    "name": "River Flow",
+    "description": "Gentle river stream",
+    "category": "water",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/river.mp3",
+    "imageAsset": "assets/images/river.png"
+  },
+  {
+    "id": "bird_forest",
+    "name": "Bird Forest",
+    "description": "Morning forest birds",
+    "category": "nature",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/bird_forest.mp3",
+    "imageAsset": "assets/images/bird_forest.png"
+  },
+  {
+    "id": "rain_thunder",
+    "name": "Rain & Thunder",
+    "description": "Rain with distant thunder",
+    "category": "weather",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/rain_thunder.mp3",
+    "imageAsset": "assets/images/rain_thunder.png"
+  },
+  {
+    "id": "meditation",
+    "name": "Meditation Bells",
+    "description": "Tibetan singing bowls",
+    "category": "ambient",
+    "isPremium": true,
+    "filePath": "assets/sounds/premium/meditation.mp3",
+    "imageAsset": "assets/images/meditation.png"
+  }
+]
