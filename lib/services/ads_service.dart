@@ -13,6 +13,7 @@ class AdsService {
   static const AdRequest _defaultAdRequest = AdRequest();
 
   bool _initialized = false;
+  Future<void>? _initFuture;
   BannerAd? _bannerAd;
   RewardedAd? _rewardedAd;
   bool _bannerLoaded = false;
@@ -21,13 +22,23 @@ class AdsService {
 
   Future<void> init() async {
     if (_initialized) return;
-    if (kIsWeb) {
-      _initialized = true;
+    // Prevent concurrent calls from each entering the consent/SDK-init flow.
+    if (_initFuture != null) {
+      await _initFuture;
       return;
     }
-    await _gatherConsent();
-    await MobileAds.instance.initialize();
-    _initialized = true;
+    final completer = Completer<void>();
+    _initFuture = completer.future;
+    try {
+      if (!kIsWeb) {
+        await _gatherConsent();
+        await MobileAds.instance.initialize();
+      }
+      _initialized = true;
+    } finally {
+      completer.complete();
+      _initFuture = null;
+    }
   }
 
   /// Requests GDPR/CCPA consent via the UMP SDK before the ad SDK initialises.
@@ -179,9 +190,14 @@ class AdsService {
         await _rewardedLoadFuture;
         if (_rewardedAd != null) {
           onLoaded?.call();
+        } else {
+          onFailed?.call(LoadAdError(0, 'ads', 'Ad unavailable', null));
         }
-      } catch (_) {
-        // Load already failed or is being retried.
+      } catch (e) {
+        // Propagate the load error so the caller can reset its loading state.
+        onFailed?.call(
+          e is LoadAdError ? e : LoadAdError(0, 'ads', e.toString(), null),
+        );
       }
       return;
     }

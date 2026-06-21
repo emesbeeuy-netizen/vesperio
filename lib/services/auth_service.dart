@@ -49,4 +49,11 @@ class AuthService {
   Future<void> logout() async {
     await PreferencesService().setBool(_kLoggedIn, false);
   }
+
+  Future<void> deleteAccount() async {
+    await PreferencesService().remove(_kLoggedIn);
+    await PreferencesService().remove(_kEmail);
+    await PreferencesService().remove(_kDisplayName);
+    await PreferencesService().remove(_kPassword);
+  }
 }

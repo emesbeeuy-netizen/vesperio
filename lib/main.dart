@@ -64,6 +64,8 @@ class _MyAppState extends State<MyApp> {
       }
     }
     await AdsService.instance.init();
+    // Pre-load the rewarded ad so the Watch Ad button is immediately active.
+    unawaited(AdsService.instance.loadRewarded());
   }
 
   @override

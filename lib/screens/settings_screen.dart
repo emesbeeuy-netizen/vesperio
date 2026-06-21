@@ -235,13 +235,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: AppSpacing.xl),
               ModernCard(
-                child: ListTile(
-                  leading: const Icon(Icons.play_circle_fill),
-                  title: const Text('Watch ad reward'),
-                  subtitle: const Text('Watch a quick ad to earn a bonus sound suggestion.'),
-                  trailing: SizedBox(
-                    width: 120,
-                    child: const RewardedAdButton(label: 'Watch Ad'),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.md,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.play_circle_fill),
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Watch ad reward',
+                                  style: AppTypography.labelLarge.copyWith(
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                Text(
+                                  'Earn 2 hours of premium access and a sleep timer bonus.',
+                                  style: AppTypography.bodySmall.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      const RewardedAdButton(label: 'Watch Ad'),
+                    ],
                   ),
                 ),
               ),

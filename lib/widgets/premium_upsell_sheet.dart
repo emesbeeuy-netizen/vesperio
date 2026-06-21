@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../constants/app_constants.dart';
 import '../services/analytics_service.dart';
@@ -269,6 +270,10 @@ class PremiumUpsellSheet extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: AppSpacing.sm),
+
+            // Required by Apple 3.1.2(c): legal links in the purchase flow.
+            _UpsellLegalLinks(),
           ],
         ),
       ),
@@ -312,6 +317,52 @@ class _BenefitRow extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _UpsellLegalLinks extends StatelessWidget {
+  Future<void> _launch(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not open the page. Please try again later.')),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const baseStyle = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 10,
+      height: 1.5,
+      color: Color(0xFF9F94C3),
+    );
+    const linkStyle = TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 10,
+      height: 1.5,
+      color: Color(0xFF22D0A7),
+      decoration: TextDecoration.underline,
+      decorationColor: Color(0xFF22D0A7),
+    );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        GestureDetector(
+          onTap: () => _launch(context, AppStrings.privacyPolicyUrl),
+          child: const Text(AppStrings.privacyPolicy, style: linkStyle),
+        ),
+        const Text('  ·  ', style: baseStyle),
+        GestureDetector(
+          onTap: () => _launch(context, AppStrings.termsOfServiceUrl),
+          child: const Text(AppStrings.termsOfService, style: linkStyle),
+        ),
+      ],
     );
   }
 }

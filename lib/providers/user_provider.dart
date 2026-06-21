@@ -222,4 +222,26 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> deleteAccount() async {
+    await _authService.deleteAccount();
+    await _storage.clearUserData();
+    await _storage.clearAllSessions();
+    _isPremium = false;
+    _rewardExpiresAt = null;
+    _favoriteSoundIds = {};
+    _user = User(
+      id: const Uuid().v4(),
+      isPremium: false,
+      premiumExpiryDate: DateTime.now(),
+      downloadedSoundIds: [],
+      totalListeningMinutes: 0,
+      lastListenedDate: DateTime.now(),
+      isFirstLaunch: true,
+      isLoggedIn: false,
+      email: null,
+      displayName: null,
+    );
+    notifyListeners();
+  }
+
 }
