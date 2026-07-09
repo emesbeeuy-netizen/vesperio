@@ -213,6 +213,7 @@ class _FocusScreenState extends State<FocusScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: _phaseColor,
                           foregroundColor: Colors.white,
+                          minimumSize: const Size(0, AppDimensions.buttonHeight),
                           padding: const EdgeInsets.symmetric(
                             horizontal: AppSpacing.xl,
                             vertical: AppSpacing.md,
@@ -224,6 +225,9 @@ class _FocusScreenState extends State<FocusScreen> {
                       const SizedBox(width: AppSpacing.md),
                       OutlinedButton.icon(
                         onPressed: _skipPhase,
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size(0, AppDimensions.buttonHeight),
+                        ),
                         icon: const Icon(Icons.skip_next),
                         label: const Text('Skip'),
                       ),

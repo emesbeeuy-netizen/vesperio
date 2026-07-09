@@ -32,6 +32,8 @@ class _RewardedAdButtonState extends State<RewardedAdButton> {
   bool _isLoading = false;
   bool _isAdReady = false;
   bool _canClaim = true;
+  bool _isShowing = false;
+  Timer? _showSafetyTimer;
 
   static const _rewardDuration = Duration(hours: 2);
   static const _rewardMinutes = 120;
@@ -41,6 +43,12 @@ class _RewardedAdButtonState extends State<RewardedAdButton> {
     super.initState();
     _canClaim = PreferencesService().canClaimDailyReward();
     _loadRewardedAd();
+  }
+
+  @override
+  void dispose() {
+    _showSafetyTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadRewardedAd() async {
@@ -93,6 +101,18 @@ class _RewardedAdButtonState extends State<RewardedAdButton> {
       return;
     }
 
+    setState(() => _isShowing = true);
+
+    // Widget-level safety net: if the AdsService timeout fires but the onClosed
+    // callback is delayed (e.g. due to isolate scheduling), this ensures _isShowing
+    // is always reset and the button never stays permanently disabled.
+    _showSafetyTimer?.cancel();
+    _showSafetyTimer = Timer(const Duration(seconds: 10), () {
+      if (!mounted) return;
+      setState(() { _isAdReady = false; _isShowing = false; });
+      _loadRewardedAd();
+    });
+
     AdsService.instance.showRewarded(
       onEarned: (RewardItem reward) async {
         if (!mounted) return;
@@ -117,8 +137,9 @@ class _RewardedAdButtonState extends State<RewardedAdButton> {
         _showRewardDialog();
       },
       onClosed: () async {
+        _showSafetyTimer?.cancel();
         if (!mounted) return;
-        setState(() => _isAdReady = false);
+        setState(() { _isAdReady = false; _isShowing = false; });
         await _loadRewardedAd();
       },
     );
@@ -193,15 +214,17 @@ class _RewardedAdButtonState extends State<RewardedAdButton> {
     }
 
     return OutlinedButton.icon(
-      onPressed: _isLoading ? null : _handleTap,
-      icon: _isLoading
+      onPressed: (_isLoading || _isShowing) ? null : _handleTap,
+      icon: (_isLoading || _isShowing)
           ? const SizedBox(
               width: 16,
               height: 16,
               child: CircularProgressIndicator(strokeWidth: 2),
             )
           : const Icon(Icons.play_circle_outline),
-      label: Text(_isLoading ? widget.loadingLabel : widget.label),
+      label: Text(
+        _isShowing ? 'Opening…' : _isLoading ? widget.loadingLabel : widget.label,
+      ),
     );
   }
 }

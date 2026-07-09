@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../constants/app_constants.dart';
@@ -19,6 +20,8 @@ class AdsService {
   bool _bannerLoaded = false;
   Future<void>? _bannerLoadFuture;
   Future<void>? _rewardedLoadFuture;
+  Timer? _rewardedLoadTimer;
+  Timer? _rewardedShowTimer;
 
   Future<void> init() async {
     if (_initialized) return;
@@ -113,6 +116,8 @@ class AdsService {
       return;
     }
 
+    await init();
+
     if (_bannerAd != null && _bannerLoaded) {
       onLoaded?.call();
       return;
@@ -156,6 +161,12 @@ class AdsService {
             completer.completeError(err);
           }
           _bannerLoadFuture = null;
+          if (!kDebugMode) {
+            FirebaseCrashlytics.instance.recordError(
+              'Banner ad failed: code=${err.code} domain=${err.domain} message=${err.message}',
+              null, reason: 'AdMob banner load failed', fatal: false,
+            );
+          }
         },
       ),
       request: _defaultAdRequest,
@@ -179,6 +190,8 @@ class AdsService {
       onFailed?.call(LoadAdError(0, 'ads', 'Ads not supported on web', null));
       return;
     }
+
+    await init();
 
     if (_rewardedAd != null) {
       onLoaded?.call();
@@ -205,11 +218,25 @@ class AdsService {
     final completer = Completer<void>();
     _rewardedLoadFuture = completer.future;
 
+    // Safety net: if the GMA SDK never fires either callback (e.g. on newer
+    // OS versions), we fail gracefully rather than hanging indefinitely.
+    _rewardedLoadTimer?.cancel();
+    _rewardedLoadTimer = Timer(const Duration(seconds: 30), () {
+      if (!completer.isCompleted) {
+        _rewardedAd = null;
+        _rewardedLoadFuture = null;
+        final err = LoadAdError(0, 'ads', 'Rewarded ad load timed out', null);
+        onFailed?.call(err);
+        completer.completeError(err);
+      }
+    });
+
     await RewardedAd.load(
       adUnitId: _rewardedAdUnitId,
       request: _defaultAdRequest,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) {
+          _rewardedLoadTimer?.cancel();
           _rewardedAd = ad;
           onLoaded?.call();
           if (!completer.isCompleted) {
@@ -218,42 +245,90 @@ class AdsService {
           _rewardedLoadFuture = null;
         },
         onAdFailedToLoad: (err) {
+          _rewardedLoadTimer?.cancel();
           _rewardedAd = null;
           onFailed?.call(err);
           if (!completer.isCompleted) {
             completer.completeError(err);
           }
           _rewardedLoadFuture = null;
+          if (!kDebugMode) {
+            FirebaseCrashlytics.instance.recordError(
+              'Rewarded ad failed: code=${err.code} domain=${err.domain} message=${err.message}',
+              null, reason: 'AdMob rewarded load failed', fatal: false,
+            );
+          }
         },
       ),
     );
 
-    await _rewardedLoadFuture;
+    try {
+      await _rewardedLoadFuture;
+    } catch (_) {
+      // Error already surfaced via onFailed.
+    }
   }
 
   bool get hasRewarded => _rewardedAd != null;
 
   void showRewarded({required void Function(RewardItem) onEarned, void Function()? onClosed}) {
     final ad = _rewardedAd;
-    if (ad == null) return;
+    if (ad == null) {
+      // No ad available — unblock the caller immediately so the UI never hangs.
+      onClosed?.call();
+      return;
+    }
+
+    // Safety net: on iPad (iPadOS 26+) the GMA SDK can silently fail to present
+    // a full-screen ad without firing any FullScreenContentCallback. The timer
+    // only covers the "did it appear?" window — it is cancelled as soon as
+    // onAdShowedFullScreenContent fires so it never interferes with a legitimately
+    // playing ad.
+    _rewardedShowTimer?.cancel();
+    _rewardedShowTimer = Timer(const Duration(seconds: 8), () {
+      ad.dispose();
+      _rewardedAd = null;
+      onClosed?.call();
+      loadRewarded();
+    });
+
     ad.fullScreenContentCallback = FullScreenContentCallback(
+      onAdShowedFullScreenContent: (ad) {
+        // Ad is confirmed on screen — cancel the "failed to appear" timer.
+        _rewardedShowTimer?.cancel();
+      },
       onAdDismissedFullScreenContent: (ad) {
+        _rewardedShowTimer?.cancel();
+        // Guard against double-dispose if the safety timer already ran.
+        if (_rewardedAd == null) return;
         ad.dispose();
         _rewardedAd = null;
         onClosed?.call();
         loadRewarded();
       },
       onAdFailedToShowFullScreenContent: (ad, err) {
+        _rewardedShowTimer?.cancel();
+        // Guard against double-dispose if the safety timer already ran.
+        if (_rewardedAd == null) return;
         ad.dispose();
         _rewardedAd = null;
         onClosed?.call();
         loadRewarded();
       },
     );
-    ad.show(onUserEarnedReward: (adWithoutView, reward) => onEarned(reward));
+    try {
+      ad.show(onUserEarnedReward: (adWithoutView, reward) => onEarned(reward));
+    } catch (_) {
+      _rewardedShowTimer?.cancel();
+      ad.dispose();
+      _rewardedAd = null;
+      onClosed?.call();
+    }
   }
 
   void dispose() {
+    _rewardedLoadTimer?.cancel();
+    _rewardedShowTimer?.cancel();
     _bannerAd?.dispose();
     _rewardedAd?.dispose();
   }

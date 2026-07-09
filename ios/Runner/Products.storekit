@@ -1,0 +1,155 @@
+{
+  "identifier" : "A1B2C3D4",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationUsername" : "",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storeFront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorUnknown"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorClientInvalid"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorPaymentCancelled"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorPaymentInvalid"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorPaymentNotAllowed"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorStoreProductNotAvailable"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorCloudServicePermissionDenied"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorCloudServiceNetworkConnectionFailed"
+      },
+      {
+        "current" : "0",
+        "enabled" : false,
+        "name" : "SKErrorCloudServiceRevoked"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "B2C3D4E5",
+      "localizations" : [
+
+      ],
+      "name" : "Vesperio Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "debugDelay" : 0,
+          "displayPrice" : "1.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "C3D4E5F6",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Access all premium sounds and features",
+              "displayName" : "Vesperio Premium Weekly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vesperio_premium_weekly",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Premium Weekly",
+          "subscriptionGroupID" : "B2C3D4E5",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "debugDelay" : 0,
+          "displayPrice" : "6.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "D4E5F6A7",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Access all premium sounds and features",
+              "displayName" : "Vesperio Premium Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vesperio_premium_monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Premium Monthly",
+          "subscriptionGroupID" : "B2C3D4E5",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "debugDelay" : 0,
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "E5F6A7B8",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Access all premium sounds and features",
+              "displayName" : "Vesperio Premium Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "vesperio_premium_annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Premium Annual",
+          "subscriptionGroupID" : "B2C3D4E5",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

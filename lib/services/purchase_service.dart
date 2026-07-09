@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -81,11 +82,23 @@ class PurchaseService {
     }
   }
 
+  String? _offeringsError;
+  String? get offeringsError => _offeringsError;
+
   Future<void> _fetchOfferings() async {
     try {
       _offerings = await Purchases.getOfferings();
-    } catch (e) {
+      _offeringsError = null;
+      if (_offerings?.current == null) {
+        _offeringsError = 'RevenueCat returned no current offering. Check your RevenueCat dashboard → Offerings and make sure a default offering is set with packages linked.';
+        debugPrint('RevenueCat: offerings loaded but current is null. Available: ${_offerings?.all.keys.toList()}');
+      }
+    } catch (e, st) {
+      _offeringsError = e.toString();
       debugPrint('RevenueCat: failed to load offerings: $e');
+      if (!kDebugMode) {
+        FirebaseCrashlytics.instance.recordError(e, st, reason: 'RevenueCat getOfferings failed', fatal: false);
+      }
     }
   }
 

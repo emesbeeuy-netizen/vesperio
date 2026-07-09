@@ -199,15 +199,15 @@ class AppStrings {
   static const String privacyPolicy = 'Privacy Policy';
   static const String termsOfService = 'Terms of Service';
   static const String version = 'Version';
-  static const String appVersion = '1.0.0';
+  static const String appVersion = '1.0.2';
   static const String supportEmail = 'support@vesperio.app';
   static const String supportUrl = 'https://emesbeeuy-netizen.github.io/vesperio-website/support/';
   static const String privacyPolicyUrl = 'https://emesbeeuy-netizen.github.io/vesperio-website/privacy/';
   static const String termsOfServiceUrl = 'https://emesbeeuy-netizen.github.io/vesperio-website/terms/';
   static const String shareApp = 'Share Vesperio';
-  // TODO: replace with live App Store / Play Store URLs before publishing.
+  static const String appStoreUrl = 'https://apps.apple.com/app/id6774941465';
   static const String shareMessage =
-      'Discover Vesperio — sleep better with calming soundscapes, smart timers, and premium content. Available on the App Store and Google Play.';
+      'Discover Vesperio — sleep better with calming soundscapes, smart timers, and premium content. 🎵\n\nDownload free on the App Store:\nhttps://apps.apple.com/app/id6774941465';
   static const String signIn = 'Sign In';
   static const String logout = 'Sign Out';
   static const String createAccount = 'Create account';

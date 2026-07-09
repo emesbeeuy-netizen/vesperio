@@ -58,7 +58,10 @@ class _PremiumPurchaseScreenState extends State<PremiumPurchaseScreen> {
     setState(() {
       _isLoading = false;
       _offeringsReady = ready;
-      if (!ready) _errorMessage = 'Could not load products. Check your connection and tap Retry.';
+      if (!ready) {
+        final rcError = PurchaseService.instance.offeringsError;
+        _errorMessage = rcError ?? 'Could not load products. Check your connection and tap Retry.';
+      }
     });
   }
 
