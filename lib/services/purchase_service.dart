@@ -78,7 +78,7 @@ class PurchaseService {
     try {
       await Purchases.logIn(userId);
     } catch (e) {
-      debugPrint('RevenueCat: logIn failed: $e');
+      if (kDebugMode) debugPrint('RevenueCat: logIn failed: $e');
     }
   }
 
@@ -91,11 +91,11 @@ class PurchaseService {
       _offeringsError = null;
       if (_offerings?.current == null) {
         _offeringsError = 'RevenueCat returned no current offering. Check your RevenueCat dashboard → Offerings and make sure a default offering is set with packages linked.';
-        debugPrint('RevenueCat: offerings loaded but current is null. Available: ${_offerings?.all.keys.toList()}');
+        if (kDebugMode) debugPrint('RevenueCat: offerings loaded but current is null. Available: ${_offerings?.all.keys.toList()}');
       }
     } catch (e, st) {
       _offeringsError = e.toString();
-      debugPrint('RevenueCat: failed to load offerings: $e');
+      if (kDebugMode) debugPrint('RevenueCat: failed to load offerings: $e');
       if (!kDebugMode) {
         FirebaseCrashlytics.instance.recordError(e, st, reason: 'RevenueCat getOfferings failed', fatal: false);
       }
