@@ -199,7 +199,7 @@ class AppStrings {
   static const String privacyPolicy = 'Privacy Policy';
   static const String termsOfService = 'Terms of Service';
   static const String version = 'Version';
-  static const String appVersion = '1.0.2';
+  static const String appVersion = '1.0.3';
   static const String supportEmail = 'support@vesperio.app';
   static const String supportUrl = 'https://emesbeeuy-netizen.github.io/vesperio-website/support/';
   static const String privacyPolicyUrl = 'https://emesbeeuy-netizen.github.io/vesperio-website/privacy/';
